@@ -1,14 +1,14 @@
+import random
+import re
+import string
+import unicodedata
+
 import torch
 from torch.utils.data import Dataset
 
-import unicodedata
-import string
-import re
-import random
-
 SOS_token = 0
 EOS_token = 1
-MAX_LENGTH = 20
+MAX_LENGTH = 10
 
 
 class Lang(object):
@@ -78,8 +78,8 @@ eng_prefixes = ("i am ", "i m ", "he is", "he s ", "she is", "she s",
 
 def filterPair(p):
     return len(p[0].split(' ')) < MAX_LENGTH and \
-        len(p[1].split(' ')) < MAX_LENGTH
-    # p[1].startswith(eng_prefixes)
+        len(p[1].split(' ')) < MAX_LENGTH and \
+        p[1].startswith(eng_prefixes)
 
 
 def filterPairs(pairs):
@@ -98,6 +98,7 @@ def prepareData(lang1, lang2, reverse=False):
     print("Counted words:")
     print(input_lang.name, input_lang.n_words)
     print(output_lang.name, output_lang.n_words)
+    print(random.choice(pairs))
     return input_lang, output_lang, pairs
 
 
@@ -109,10 +110,7 @@ def tensorFromSentence(lang, sentence):
     indexes = indexesFromSentence(lang, sentence)
     indexes.append(EOS_token)
     result = torch.LongTensor(indexes)
-    if torch.cuda.is_available():
-        return result.cuda()
-    else:
-        return result
+    return result
 
 
 def tensorFromPair(input_lang, output_lang, pair):
