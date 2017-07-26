@@ -20,7 +20,7 @@ print()
 input_size = lang_dataset.input_lang_words
 hidden_size = 256
 output_size = lang_dataset.output_lang_words
-total_epoch = 100
+total_epoch = 20
 
 encoder = EncoderRNN(input_size, hidden_size)
 decoder = DecoderRNN(hidden_size, output_size, n_layers=2)
@@ -43,7 +43,7 @@ def showPlot(points):
 def train(encoder, decoder, total_epoch, use_attn):
 
     param = list(encoder.parameters()) + list(decoder.parameters())
-    optimizer = optim.SGD(param, lr=1e-2)
+    optimizer = optim.Adam(param, lr=1e-2)
     criterion = nn.NLLLoss()
     plot_losses = []
     for epoch in range(total_epoch):
